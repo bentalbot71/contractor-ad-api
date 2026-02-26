@@ -65,6 +65,16 @@ app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Contractor Ad API running' });
 });
 
+// ── GET /api/ads ─────────────────────────────────────────────
+app.get('/api/ads', auth, (req, res) => {
+  try {
+    const ads = db.prepare('SELECT * FROM ads ORDER BY created_at DESC').all();
+    res.json(ads);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ── POST /api/webhook/ads/create ─────────────────────────────
 app.post('/api/webhook/ads/create', auth, (req, res) => {
   try {
@@ -138,6 +148,16 @@ app.get('/api/ads/by-campaign/:campaign_id', auth, (req, res) => {
     const ad = db.prepare('SELECT * FROM ads WHERE campaign_id = ? LIMIT 1').get(req.params.campaign_id);
     if (!ad) return res.status(404).json({ error: 'Ad not found' });
     res.json(ad);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── GET /api/leads ───────────────────────────────────────────
+app.get('/api/leads', auth, (req, res) => {
+  try {
+    const leads = db.prepare('SELECT * FROM leads ORDER BY logged_at DESC').all();
+    res.json(leads);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
